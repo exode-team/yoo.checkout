@@ -1,42 +1,39 @@
 # Yoo.Checkout API SDK
 
-[![A@SEVEN](https://i.ibb.co/my3rNCm/logo1.png)](https://a2seven.com/)
-[![npm version](https://img.shields.io/npm/v/@a2seven/yoo-checkout.svg)](npmjs.com/package/@a2seven/yoo-checkout)
-[![license](https://img.shields.io/npm/l/@a2seven/yoo-checkout.svg)](npmjs.com/package/@a2seven/yoo-checkout)
-[![npm version](https://img.shields.io/badge/Support%20us-A2Seven-41B883.svg)](https://a2seven.com/)
-[README](README.ru.md) на русском!
 
-[Yoo.Checkout](https://yookassa.ru/) - a universal solution for working with online payments. The Yoo.Checkout API is
-built on REST-principles, works with real objects and has predictable behavior. Using this API, you can send payment
-requests, save payment information for repeated charges (and include auto payments), make refunds and much more. The API
-uses HTTP as the main protocol, which means it is suitable for development in any programming language that can work
-with HTTP libraries (for example, cURL). Authentication uses Basic Auth, so you can make your first request directly
-from the browser. The API supports POST and GET requests. POST requests use JSON arguments, GET requests work with query
-strings. The API always returns a response in JSON format, regardless of the type of request.
+[Yoo.Checkout](https://yookassa.ru/) - универсальное решение для работы с онлайн-платежами. API ЮKassa построено на
+REST-принципах, работает с реальными объектами и обладает предсказуемым поведением. С помощью этого API вы можете
+отправлять запросы на оплату, сохранять платежную информацию для повторных списаний, совершать возвраты и многое другое.
 
-## Authentication
+API в качестве основного протокола использует HTTP, а значит, подходит для разработки на любом языке программирования,
+который умеет работать с HTTP-библиотеками (cURL и другими).
 
-To authenticate requests you need to use HTTP Basic Auth. In the headers of the requests as a user name you need to pass
-the ID of your store in YooKassa, as a password - your secret key (it must be generated and activated by the password
-from the sms)
+API поддерживает POST и GET-запросы. POST-запросы используют JSON-аргументы, GET-запросы работают со строками запросов.
+API всегда возвращает ответ в формате JSON, независимо от типа запроса.
 
-Example request with authentication
+## Аутентификация
+
+Для аутентификации запросов необходимо использовать HTTP Basic Auth. В заголовках запросов в качестве имени пользователя
+необходимо передать идентификатор вашего магазина в ЮKassa, в качестве пароля — ваш секретный ключ (его нужно
+сгенерировать и активировать паролем из смс).
+
+Пример запроса с аутентификацией
 
 ```bash
 curl https://api.yookassa.ru/v3/payments/{payment_id} \
   -u <shopId>:<secretKey>
 ```
 
-## Idempotency
+## Идемпотентность
 
-In API context, idempotency means that multiple requests are handled the same way as a single request. It means that if
-you receive a repeated request with the same parameters, you will get the result of the original request in your
-response. This behavior helps to avoid undesirable repetition of transactions. For example, if there is a problem with
-the network and the connection is broken while making a payment, you can safely repeat the request as many times as you
-want. GET requests are idempotent by default because they have no undesirable consequences. The Idempotence-Key header (
-or idempotence key) is used to ensure the idempotency of POST requests.
+В контексте API идемпотентность означает, что многократные запросы обрабатываются так же, как однократные. Это значит,
+что получив повторный запрос с теми же параметрами, ЮKassa выдаст в ответе результат исходного запроса. Такое поведение
+помогает избежать нежелательного повторения транзакций. Например, если при проведении платежа возникли проблемы с сетью,
+и соединение прервалось, вы сможете безопасно повторить нужный запрос неограниченное количество раз. GET-запросы
+являются по умолчанию идемпотентными, так как не имеют нежелательных последствий. Для обеспечения идемпотентности
+POST-запросов используется заголовок Idempotence-Key (или ключ идемпотентности).
 
-Example of a query with an idempotent key
+Пример запроса с ключом идемпотентности
 
 ```bash
 curl https://api.yookassa.ru/v3/refunds \
@@ -53,106 +50,82 @@ curl https://api.yookassa.ru/v3/refunds \
       }'
 ```
 
-If you repeat a request with the same data and the same key, the API processes it as a repeat request. If the data in
-the request is the same and the idempotence key is different, the request is executed as a new one. You can pass any
-value unique to that operation on your side in the Idempotence-Key header. We recommend using a V4 UUID. YooKassa
-provides idempotence for 24 hours after the first request, then a second request will be processed as a new one.
+Если вы повторяете запрос с теми же данными и тем же ключом, API обрабатывает его как повторный. Если данные в запросе
+те же, а ключ идемпотентности отличается, запрос выполняется как новый. В заголовке Idempotence-Key можно передавать
+любое значение, уникальное для этой операции на вашей стороне. Мы рекомендуем использовать V4 UUID. ЮKassa обеспечивает
+идемпотентность в течение 24 часов после первого запроса, потом повторный запрос будет обработан как новый.
 
-## Synchronicity
+## Синхронность
 
-YooKassa processes the received request immediately and returns the result of processing ("success" or "failure"). If an
-exact response cannot be given within 30 seconds, e.g. due to a problem on the acquirer's side, YooKassa will return
-HTTP code 500 and try to cancel the operation. To find out the final result of the request, repeat the request with the
-same data and the same idempotent key. The recommended frequency of repetitions is once per minute, until YooKassa
-reports a response other than HTTP 500.
+ЮKassa обрабатывает полученный запрос немедленно и возвращает результат обработки («успех» или «неудача»). Если в
+течение 30 секунд невозможно дать точный ответ, например из-за неполадок на стороне эквайера, ЮKassa вернет HTTP-код 500
+и попытается отменить операцию. Чтобы узнать окончательный результат обработки запроса, повторите запрос с теми же
+данными и с тем же ключом идемпотентности. Рекомендуемая частота повторений: один раз в минуту до тех пор, пока ЮKassa
+не сообщит ответ, отличный от HTTP 500.
 
-## HTTP response codes
+## HTTP-коды ответов
 
-If the request is processed successfully, the API will return the HTTP code 200 and the response body. If an error
-occurs during processing, API will return the error object and standard HTTP code.
+Если запрос обработан успешно, API вернет HTTP-код 200 и тело ответа. Если в процессе обработки произойдет ошибка, API
+вернет объект ошибки и стандартный HTTP-код.
 
 | HTTP CODE | ERROR CODE | DESCRIPTION |
 | ------ | ------ | ------ |
-| 400 | invalid_request, not_supported | Incorrect request. Most often this status is issued due to a violation of the rules of interaction with the API. | 
-| 401 | invalid_credentials | [Basic Auth] Your YooKassa account ID or secret key (authentication username and password) is invalid. [OAuth 2.0] Invalid OAuth token: it is invalid, out of date, or has been revoked. Request the token again. |
-| 403 | forbidden | The secret key or OAuth token is correct, but lacks permissions to complete the transaction. |
-| 404 | not_found | Resource not found. | 
-| 429 | too_many_requests | The limit of requests per time unit has been exceeded. Try reducing the intensity of the requests. | 
-| 500 | internal_server_error | Technical problems on the side of YooKasa. The result of the request processing is unknown. Repeat the request later with the same idempotency key. It is recommended to repeat the request at intervals of once a minute until YooKassa reports the result of operation processing. |
+| 400 | invalid_request, not_supported | IНеправильный запрос. Чаще всего этот статус выдается из-за нарушения правил взаимодействия с API. | 
+| 401 | invalid_credentials | [Basic Auth] Неверный идентификатор вашего аккаунта в ЮKassa или секретный ключ (имя пользователя и пароль при аутентификации). [OAuth 2.0] Невалидный OAuth-токен: он некорректный, устарел или его отозвали. Запросите токен заново. |
+| 403 | forbidden | Секретный ключ или OAuth-токен верный, но не хватает прав для совершения операции. |
+| 404 | not_found | Ресурс не найден. | 
+| 429 | too_many_requests | Превышен лимит запросов в единицу времени. Попробуйте снизить интенсивность запросов. | 
+| 500 | internal_server_error | Технические неполадки на стороне ЮKassa. Результат обработки запроса неизвестен. Повторите запрос позднее с тем же ключом идемпотентности. Рекомендуется повторять запрос с периодичностью один раз в минуту до тех пор, пока ЮKassa не сообщит результат обработки операции. |
 
-Example error response body
+Пример тела ответа ошибки
 
-```javascript
+```json
   {
-    "type"
-:
-    "error",
-        "id"
-:
-    "ab5a11cd-13cc-4e33-af8b-75a74e18dd09",
-        "code"
-:
-    "invalid_request",
-        "description"
-:
-    "Idempotence key duplicated",
-        "parameter"
-:
-    "Idempotence-Key"
-}
+    "type": "error",
+    "id": "ab5a11cd-13cc-4e33-af8b-75a74e18dd09",
+    "code": "invalid_request",
+    "description": "Idempotence key duplicated",
+    "parameter": "Idempotence-Key"
+  }
 ```
 
-SDK Error Response
+Пример объекта ошибки
 
 ```javascript
-ErrorResponse
-{
-    "type"
-:
-    "error",
-        "id"
-:
-    "ab5a11cd-13cc-4e33-af8b-75a74e18dd09",
-        "code"
-:
-    "invalid_request",
-        "description"
-:
-    "Idempotence key duplicated",
-        "parameter"
-:
-    "Idempotence-Key"
-    "errorCode"
-:
-    401
+ErrorResponse {
+    "type": "error",
+    "id": "ab5a11cd-13cc-4e33-af8b-75a74e18dd09",
+    "code": "invalid_request",
+    "description": "Idempotence key duplicated",
+    "parameter": "Idempotence-Key"
+    "errorCode": 401
 }
 ```
 
-## Reference
+## Ссылки
 
-[YooKassa API page](https://yookassa.ru/developers/api#intro)
+[YooKassa справочник API](https://yookassa.ru/developers/api#intro)
 
-## Installation
+## Установка
 
 ```bash
 npm install @a2seven/yoo-checkout
 ```
 
-## Getting started
+## Начало работы
 
 ```javascript
-import { YooCheckout } from '@a2seven/yoo-checkout'; // OR const { YooCheckout } = require('@a2seven/yoo-checkout');
+import { YooCheckout } from '@a2seven/yoo-checkout'; // или const { YooCheckout } = require('@a2seven/yoo-checkout');
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 ```
 
-## Docs
+## Документация
 
-### [Create payment](https://yookassa.ru/developers/api#create_payment)
+### [Создание платежа](https://yookassa.ru/developers/api#create_payment)
 
 ```javascript
-import { YooCheckout, ICreatePayment } from '@a2seven/yoo-checkout';
-
+import { YooCheckout, ICreatePayment  } from '@a2seven/yoo-checkout';
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -176,15 +149,14 @@ try {
     const payment = await checkout.createPayment(createPayload, idempotenceKey);
     console.log(payment)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Get payment](https://yookassa.ru/developers/api#get_payment)
+### [Информация о платеже](https://yookassa.ru/developers/api#get_payment)
 
 ```javascript
 import { YooCheckout } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -194,15 +166,14 @@ try {
     const payment = await checkout.getPayment(paymentId);
     console.log(payment)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Capture payment](https://yookassa.ru/developers/api#capture_payment)
+### [Подтверждение платежа](https://yookassa.ru/developers/api#capture_payment)
 
 ```javascript
 import { YooCheckout, ICapturePayment } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -221,15 +192,14 @@ try {
     const payment = await checkout.capturePayment(paymentId, capturePayload, idempotenceKey);
     console.log(payment)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Cancel payment](https://yookassa.ru/developers/api#cancel_payment)
+### [Отмена платежа](https://yookassa.ru/developers/api#cancel_payment)
 
 ```javascript
 import { YooCheckout } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -241,33 +211,31 @@ try {
     const payment = await checkout.cancelPayment(paymentId, idempotenceKey);
     console.log(payment)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Get payment list](https://yookassa.ru/developers/api#get_payments_list)
+### [Список платежей](https://yookassa.ru/developers/api#get_payments_list)
 
 ```javascript
 import { YooCheckout, IGetPaymentList } from '@a2seven/yoo-checkout';
 
-
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
-const filters: IGetPaymentList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' }, limit: 20 };
+const filters: IGetPaymentList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' },  limit: 20 };
 
 try {
     const paymentList = await checkout.getPaymentList(filters);
     console.log(paymentList)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Create refund](https://yookassa.ru/developers/api#create_refund)
+### [Создание возврата](https://yookassa.ru/developers/api#create_refund)
 
 ```javascript
 import { YooCheckout, ICreateRefund } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -285,15 +253,14 @@ try {
     const refund = await checkout.createRefund(createRefundPayload, idempotenceKey);
     console.log(refund)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Get refund](https://yookassa.ru/developers/api#get_refund)
+### [Информация о возврате](https://yookassa.ru/developers/api#get_refund)
 
 ```javascript
 import { YooCheckout } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -303,33 +270,31 @@ try {
     const refund = await checkout.getRefund(refundId);
     console.log(refund)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Get refund list](https://yookassa.ru/developers/api#get_refunds_list)
+### [Список возвратов](https://yookassa.ru/developers/api#get_refunds_list)
 
 ```javascript
 import { YooCheckout, IGetRefundList } from '@a2seven/yoo-checkout';
 
-
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
-const filters: IGetRefundList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' }, limit: 20 };
+const filters: IGetRefundList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' },  limit: 20 };
 
 try {
     const refundList = await checkout.getRefundList(filters);
     console.log(refundList)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Create receipt](https://yookassa.ru/developers/api#create_receipt)
+### [Создание чека](https://yookassa.ru/developers/api#create_receipt)
 
 ```javascript
 import { YooCheckout, ICreateReceipt } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -368,15 +333,14 @@ try {
     const receipt = await checkout.createReceipt(createReceiptPayload, idempotenceKey);
     console.log(receipt)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Get receipt](https://yookassa.ru/developers/api#get_receipt)
+### [Получить информацию о чеке](https://yookassa.ru/developers/api#get_receipt)
 
 ```javascript
 import { YooCheckout } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -386,31 +350,30 @@ try {
     const receipt = await checkout.getReceipt(receiptId);
     console.log(receipt)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Get receipt list](https://yookassa.ru/developers/api#get_receipts_list)
+### [Список чеков](https://yookassa.ru/developers/api#get_receipts_list)
 
 ```javascript
 import { YooCheckout, IGetReceiptList } from '@a2seven/yoo-checkout';
 
-
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
-const filters: IGetReceiptList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' }, limit: 20 };
+const filters: IGetReceiptList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' },  limit: 20 };
 
 try {
     const receiptList = await checkout.getReceiptList(filters);
     console.log(receiptList)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-#### The following functionality works only as part of an [affiliate program](https://yookassa.ru/developers/partners-api/basics)
+#### Следующий функционал работает только в рамках [партнерской программы](https://yookassa.ru/developers/partners-api/basics)
 
-### [Create webhook](https://yookassa.ru/developers/api#create_webhook)
+### [Создание веб-хука](https://yookassa.ru/developers/api#create_webhook)
 
 ```javascript
 import { YooCheckout, ICreateWebHook } from '@a2seven/yoo-checkout';
@@ -432,26 +395,24 @@ try {
 }
 ```
 
-### [Get webhook list](https://yookassa.ru/developers/api#get_webhook_list)
+### [Список веб-хуков](https://yookassa.ru/developers/api#get_webhook_list)
 
 ```javascript
 import { YooCheckout } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey', token: 'your_OAuth_token' });
 try {
     const webHookList = await checkout.getWebHookList();
     console.log(webHookList)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Delete webhook](https://yookassa.ru/developers/api#delete_webhook)
+### [Удаление веб-хука](https://yookassa.ru/developers/api#delete_webhook)
 
 ```javascript
 import { YooCheckout, ICreateWebHook } from '@a2seven/yoo-checkout';
-
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey', token: 'your_OAuth_token' });
 
@@ -460,35 +421,34 @@ const webHookId = 'wh-edba6d49-ce3e-4d99-991b-4bb164859dc3';
 try {
     await checkout.deleteWebHook(webHookId);
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-### [Get shop info](https://yookassa.ru/developers/api#get_me)
+### [Получить информацию о магазине](https://yookassa.ru/developers/api#get_me)
 
 ```javascript
 import { YooCheckout, ICreateWebHook } from '@a2seven/yoo-checkout';
 
-
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey', token: 'your_OAuth_token' });
 
 try {
-    const shop = await checkout.getShop();
-    console.log(shop)
+   const shop = await checkout.getShop();
+   console.log(shop)
 } catch (error) {
-    console.error(error);
+     console.error(error);
 }
 ```
 
-## Running Tests
+## Запуск тестов
 
-To install the development dependencies (run where the package.json is):
+Установите зависимости:
 
 ```bash
 $ npm install
 ```
 
-Run the tests:
+Запустите тесты:
 
 ```bash
 $ npm run test:unit
