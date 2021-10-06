@@ -95,13 +95,26 @@ Example error response body
 SDK Error Response
 
 ```javascript
-ErrorResponse {
-    "type": "error",
-    "id": "ab5a11cd-13cc-4e33-af8b-75a74e18dd09",
-    "code": "invalid_request",
-    "description": "Idempotence key duplicated",
-    "parameter": "Idempotence-Key"
-    "errorCode": 401
+ErrorResponse
+{
+    "type"
+:
+    "error",
+        "id"
+:
+    "ab5a11cd-13cc-4e33-af8b-75a74e18dd09",
+        "code"
+:
+    "invalid_request",
+        "description"
+:
+    "Idempotence key duplicated",
+        "parameter"
+:
+    "Idempotence-Key"
+    "errorCode"
+:
+    401
 }
 ```
 
@@ -128,7 +141,8 @@ const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secre
 ### [Create payment](https://yookassa.ru/developers/api#create_payment)
 
 ```javascript
-import { YooCheckout, ICreatePayment  } from '@a2seven/yoo-checkout';
+import { YooCheckout, ICreatePayment } from '@a2seven/yoo-checkout';
+
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -152,7 +166,7 @@ try {
     const payment = await checkout.createPayment(createPayload, idempotenceKey);
     console.log(payment)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -178,6 +192,7 @@ try {
 ```javascript
 import { YooCheckout, ICapturePayment } from '@a2seven/yoo-checkout';
 
+
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
 const paymentId = '21966b95-000f-50bf-b000-0d78983bb5bc';
@@ -195,7 +210,7 @@ try {
     const payment = await checkout.capturePayment(paymentId, capturePayload, idempotenceKey);
     console.log(payment)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -223,15 +238,16 @@ try {
 ```javascript
 import { YooCheckout, IGetPaymentList } from '@a2seven/yoo-checkout';
 
+
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
-const filters: IGetPaymentList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' },  limit: 20 };
+const filters: IGetPaymentList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' }, limit: 20 };
 
 try {
     const paymentList = await checkout.getPaymentList(filters);
     console.log(paymentList)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -239,6 +255,7 @@ try {
 
 ```javascript
 import { YooCheckout, ICreateRefund } from '@a2seven/yoo-checkout';
+
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -256,7 +273,7 @@ try {
     const refund = await checkout.createRefund(createRefundPayload, idempotenceKey);
     console.log(refund)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -282,15 +299,16 @@ try {
 ```javascript
 import { YooCheckout, IGetRefundList } from '@a2seven/yoo-checkout';
 
+
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
-const filters: IGetRefundList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' },  limit: 20 };
+const filters: IGetRefundList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' }, limit: 20 };
 
 try {
     const refundList = await checkout.getRefundList(filters);
     console.log(refundList)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -298,6 +316,7 @@ try {
 
 ```javascript
 import { YooCheckout, ICreateReceipt } from '@a2seven/yoo-checkout';
+
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
@@ -336,7 +355,7 @@ try {
     const receipt = await checkout.createReceipt(createReceiptPayload, idempotenceKey);
     console.log(receipt)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -362,15 +381,16 @@ try {
 ```javascript
 import { YooCheckout, IGetReceiptList } from '@a2seven/yoo-checkout';
 
+
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey' });
 
-const filters: IGetReceiptList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' },  limit: 20 };
+const filters: IGetReceiptList = { created_at: { value: '2021-01-27T13:58:02.977Z', mode: 'gte' }, limit: 20 };
 
 try {
     const receiptList = await checkout.getReceiptList(filters);
     console.log(receiptList)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -380,6 +400,7 @@ try {
 
 ```javascript
 import { YooCheckout, ICreateWebHook } from '@a2seven/yoo-checkout';
+
 
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey', token: 'your_OAuth_token' });
 
@@ -393,7 +414,7 @@ try {
     const webhook = await checkout.createWebHook(createWebHookPayload, idempotenceKey);
     console.log(webhook)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -416,6 +437,7 @@ try {
 ```javascript
 import { YooCheckout, ICreateWebHook } from '@a2seven/yoo-checkout';
 
+
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey', token: 'your_OAuth_token' });
 
 const webHookId = 'wh-edba6d49-ce3e-4d99-991b-4bb164859dc3';
@@ -423,7 +445,7 @@ const webHookId = 'wh-edba6d49-ce3e-4d99-991b-4bb164859dc3';
 try {
     await checkout.deleteWebHook(webHookId);
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 
@@ -432,13 +454,14 @@ try {
 ```javascript
 import { YooCheckout, ICreateWebHook } from '@a2seven/yoo-checkout';
 
+
 const checkout = new YooCheckout({ shopId: 'your_shopId', secretKey: 'your_secretKey', token: 'your_OAuth_token' });
 
 try {
-   const shop = await checkout.getShop();
-   console.log(shop)
+    const shop = await checkout.getShop();
+    console.log(shop)
 } catch (error) {
-     console.error(error);
+    console.error(error);
 }
 ```
 

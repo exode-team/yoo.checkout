@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
+
 import {
     errorFactory,
     ErrorResponse,
@@ -14,8 +15,10 @@ import {
     WebHook,
     webhookFactory,
 } from '../models';
+
 import {
-    ICapturePayment, ICreateError,
+    ICapturePayment,
+    ICreateError,
     ICreatePayment,
     ICreateReceipt,
     ICreateRefund,
@@ -29,6 +32,7 @@ import {
     IWebHookList,
     IYooCheckoutOptions,
 } from '../types';
+
 import { apiUrl, DEFAULT } from '.';
 
 
@@ -137,7 +141,7 @@ export class YooCheckout {
     }
 
     /**
-     * Cancel paymnet
+     * Cancel payment
      * @see 'https://yookassa.ru/developers/api#cancel_payment'
      * @param {string} paymentId
      * @paramExample '215d8da0-000f-50be-b000-0003308c89be'
@@ -234,7 +238,7 @@ export class YooCheckout {
         try {
             const options = { auth: this.authData() };
             const { data } = await axios.get(`${this.root}/refunds${this.buildQuery(f)}`, options);
-            data.items = data.items.map((i: any) => paymentFactory(i));
+            data.items = data.items.map((i: any) => refundFactory(i));
             return data;
         } catch (error) {
             throw errorFactory(error as ICreateError);

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/yoocheckout.iml" filepath="$PROJECT_DIR$/.idea/yoocheckout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/yoo.checkout.iml" filepath="$PROJECT_DIR$/.idea/yoo.checkout.iml" />
     </modules>
   </component>
 </project>
