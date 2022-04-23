@@ -1,4 +1,12 @@
 {
+  "name": "@exode/yoo.checkout",
+  "version": "1.0.0",
+  "main": "build/lib/public-api.js",
+  "module": "build/lib/public-api.js",
+  "typings": "build/lib/public-api.d.ts",
+  "files": [
+    "build"
+  ],
   "scripts": {
     "serve": "npm run lint && tsc-watch -p tsconfig.json --onSuccess 'node build/index.js'",
     "build": "rm -rf build/* && npm run lint && tsc -p ./",
